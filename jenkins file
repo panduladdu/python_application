@@ -10,19 +10,19 @@ node {
      sh "${mavenHome}/bin/mvn sonar:sonar"                
     }
     stage("docker build image"){
-        sh "docker build -t 637298232611.dkr.ecr.ap-south-1.amazonaws.com/python-app:${buildNumber} ."
+        sh "docker build -t panduladdu/python-app:${buildNumber} ."
     }
     stage("docker login and push"){
-        sh "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 637298232611.dkr.ecr.ap-south-1.amazonaws.com"
-        sh "docker push 637298232611.dkr.ecr.ap-south-1.amazonaws.com/python-app:${buildNumber}"
-    }
-    stage("deploy the code"){
-      sshagent(['ssh agent']) {
-     sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.10.139 aws ecr get-login-password --region ap-south-1 | ssh -o  StrictHostKeyChecking=no ubuntu@172.31.10.139 docker login --username AWS --password-stdin 637298232611.dkr.ecr.ap- south-1.amazonaws.com"
-     sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.10.139 docker rm -f pythoncontainer || true"
-     sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.10.139 docker run -d  --name pythoncontainer -p 5000:5000 637298232611.dkr.ecr.ap-south-1.amazonaws.com/python-app:${buildNumber}"
-
-              }
-     }   
-    
+        withCredentials([string(credentialsId: 'dockerhubpassword', variable: 'dockerhub')]) {
+        sh "docker login -u panduladdu -p ${dockerhub}"
+        sh "docker push panduladdu/pythoapp:${buildNumber}"
+}
+}
+    stage("update image tag in  compose file"){
+        sh "sed -i 's/TAG/${buildNumber}/g' mavenwebappdeployment.yaml"
+         }
+    stage("deploy to the k8s cluster"){
+        sh "kubectl apply -f mavenwebappdeployment.yaml "
+    }     
+}
 }
