@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pythonapplication
+spec:
+  revisionHistoryLimit: 10
+  replicas: 2
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: pythonapp
+  template:
+    metadata:
+      name: pythonapp
+      labels:
+        app: pythonapp
+    spec:
+      containers:
+        - name: pyhonapplication
+          image: panduladdu/python-app:TAG
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pythonapp
+spec:
+  selector:
+    app: pythonapp
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 5000
