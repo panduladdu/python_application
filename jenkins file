@@ -24,6 +24,5 @@
     stage("deploy to the k8s cluster"){
         sh "kubectl apply -f mavenwebappdeployment.yaml "
     }     
-}
 */
 }
