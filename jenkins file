@@ -1,11 +1,11 @@
  node {
      def buildNumber=BUILD_NUMBER
      stage("git clone"){
-           git credentialsId: 'dcc54a72-02e7-4796-b586-3a051481d64a', url: 'https://github.com/panduladdu/Python-Flask-  RestAPI.git'
-    }
+           git credentialsId: '58d406a5-1c9a-4d71-9726-487b28ada3fa', url: 'https://github.com/panduladdu/python_application.git'
     stage("maven clean package"){
         sh "${mavenHome}/bin/mvn clean package"
     }
+    /*
     stage('ExecutesonarqubeReport'){
      sh "${mavenHome}/bin/mvn sonar:sonar"                
     }
@@ -25,4 +25,5 @@
         sh "kubectl apply -f mavenwebappdeployment.yaml "
     }     
 }
+*/
 }
