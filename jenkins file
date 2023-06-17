@@ -1,4 +1,5 @@
  node {
+     def mavenHome = tool name: "maven",type: "maven"
      def buildNumber=BUILD_NUMBER
      stage("git clone"){
            git credentialsId: '58d406a5-1c9a-4d71-9726-487b28ada3fa', url: 'https://github.com/panduladdu/python_application.git'
